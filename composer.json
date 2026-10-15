@@ -1,0 +1,47 @@
+{
+    "name": "omnilab/gaia",
+    "type": "library",
+    "description": "Omnilab Gaia: a source of ESA's Gaia DR3 by its source_id or designation (Gaia DR3 4472832130942575872) - its position at epoch J2016.0, parallax, proper motion and RUWE, its G, BP, RP and RVS magnitudes, radial velocity and line broadening, its astrophysical parameters (GSP-Phot temperature, gravity, metallicity, distance, extinction; FLAME radius, mass, luminosity, age; Apsis spectral type), its class probabilities and Hipparcos number - and the sources of a cone on the sky, through the ESA Gaia Archive's TAP service in ADQL, no key needed.",
+    "keywords": [
+        "science",
+        "astronomy",
+        "gaia",
+        "esa",
+        "astrometry",
+        "tap",
+        "adql",
+        "stars",
+        "omnilab"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Marco Meyer",
+            "email": "marco.meyer@glitchr.io"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "glitchr/omnilab": "^1.0@dev",
+        "symfony/http-client": "^6.4|^7.0|^8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Omnilab\\Gaia\\": ""
+        },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Omnilab\\Gaia\\Tests\\": "Tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
