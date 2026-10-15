@@ -38,7 +38,7 @@ for the pool of anonymous callers. No rate is published: no throttle by default.
 
 | Method | Reads | ADQL |
 |---|---|---|
-| `entity()` | a `source_id` (`4472832130942575872`), a designation (`Gaia DR3 4472832130942575872`, case aside), `simbad:Gaia DR3 ...`, an `Identifier` of the `simbad` scheme whose value is a designation | `SELECT ... FROM gaiadr3.gaia_source AS g LEFT JOIN gaiadr3.astrophysical_parameters AS a ... LEFT JOIN gaiadr3.hipparcos2_best_neighbour AS h ... WHERE g.source_id = ...` |
+| `entity()` | a `source_id` (`4472832130942575872`, `gaia:4472832130942575872`), a designation (`Gaia DR3 4472832130942575872`, case aside), `simbad:Gaia DR3 ...`, an `Identifier` of the `simbad` scheme whose value is a designation | `SELECT ... FROM gaiadr3.gaia_source AS g LEFT JOIN gaiadr3.astrophysical_parameters AS a ... LEFT JOIN gaiadr3.hipparcos2_best_neighbour AS h ... WHERE g.source_id = ...` |
 | `cone()` | outside the contract: a right ascension and a declination (degrees, ICRS), a radius (degrees), a page size (2,000 at most), a faintest G magnitude, a cursor | `SELECT TOP n+1 ..., DISTANCE(POINT(ra, dec), POINT(g.ra, g.dec)) AS separation FROM gaiadr3.gaia_source AS g WHERE 1 = CONTAINS(POINT(g.ra, g.dec), CIRCLE(ra, dec, r)) [AND g.phot_g_mean_mag <= m] ORDER BY separation ASC, g.source_id ASC [OFFSET k]` |
 
 One query an entity, one a cone's page. Another name - a star's (`* alf Ori`, `HIP 87937`), Gaia
@@ -59,7 +59,7 @@ ADQL takes `OFFSET`), the order made stable by the `source_id`; `total` is known
 
 ## What an entity holds
 
-`id` (its designation in the `simbad` scheme: `simbad:Gaia DR3 4472832130942575872`), `label`
+`id` (its source_id in the `gaia` scheme: `gaia:4472832130942575872`), `label`
 (the designation), `domain` astronomy, `kind` `source` (Gaia's word: a star, most often, but also a
 quasar, a galaxy, a component of a double - the class probabilities say which), `url` (its VizieR
 record, the page Wikidata's P13228 links to: the archive has no page per source), `synonyms` (its
@@ -91,18 +91,19 @@ astrophysical parameters their 16th and 84th percentiles, of which a `Quantity` 
 distance from the value (Barnard's star's temperature, 3,099.63 K between 3,098.76 and 3,101.63:
 ± 1.9983).
 
-`identifiers`: its own, and its Hipparcos best neighbour (`simbad:HIP 87937`): the same star, by a
+`identifiers`: its own, its designation (`simbad:Gaia DR3 4472832130942575872`) and its Hipparcos best neighbour (`simbad:HIP 87937`): the same star, by a
 name SIMBAD resolves. No `related`.
 
-## The scheme: what the core does not have
+## The schemes
 
-The core has no scheme for Gaia (Wikidata holds Gaia DR3 ids in P13228, "Gaia ID", on 4,606,263
-items on 2026-10-15). A source is named by its designation - `Gaia DR3 <source_id>`, the name the
-DR3 catalogue gives it in its `designation` column, "unique across all Data Releases" - in the
-`simbad` scheme, the core's scheme for an astronomical object's name: SIMBAD resolves it for the
-sources it lists (Barnard's star, 51 Peg, Proxima Centauri: checked on 2026-10-15), not for every
-one of the 1.8 billion (SIMBAD lists 22 million objects). When the core has a Gaia scheme, the id
-moves to it.
+A source is named in the core's `gaia` scheme by its source_id (`gaia:4472832130942575872`;
+`Gaia DR3 4472832130942575872` is read so by its shape; Wikidata holds Gaia DR3 ids in P13228,
+"Gaia ID", on 4,606,263 items on 2026-10-15), and among its identifiers by its designation -
+`Gaia DR3 <source_id>`, the name the DR3 catalogue gives it in its `designation` column, "unique
+across all Data Releases" - in the `simbad` scheme: SIMBAD resolves it for the sources it lists
+(Barnard's star, 51 Peg, Proxima Centauri: checked on 2026-10-15), not for every one of the 1.8
+billion (SIMBAD lists 22 million objects). Until the core had a Gaia scheme (2026-10-15), the id
+was the `simbad` one, which `entity()` still reads.
 
 ## The Collector: Barnard's star from SIMBAD
 
@@ -115,7 +116,7 @@ $collector->collect('simbad', "Barnard's star", 1, ['gaia', 'exoplanets']);
 
 2 calls in 8.7 s - SIMBAD's query, then Gaia's for `4472832130942575872` (omnilab/exoplanets
 refuses SIMBAD's names of a star before any call) - and `sources` = simbad, gaia; identifiers
-`simbad:NAME Barnard's star`, `simbad:Gaia DR3 4472832130942575872`, `simbad:HIP 87937`:
+`simbad:NAME Barnard's star`, `simbad:Gaia DR3 4472832130942575872`, `simbad:HIP 87937` (and, since the core's `gaia` scheme, `gaia:4472832130942575872`; Wikidata reaches it by P13228 too, `collect('wikidata', 'Q14268', 1, ['gaia'])`):
 
 ```
 object_type      BY Dra Variable [simbad]

@@ -62,7 +62,7 @@ final class GaiaSourceTest extends TestCase
     {
         $star = $this->source()->entity('Gaia DR3 4472832130942575872');
 
-        self::assertSame('simbad:Gaia DR3 4472832130942575872', $star->id->key(), 'its designation, in the simbad scheme (the core has no Gaia scheme)');
+        self::assertSame('gaia:4472832130942575872', $star->id->key(), 'its source_id, in the core\'s gaia scheme');
         self::assertSame('Gaia DR3 4472832130942575872', $star->label);
         self::assertSame(Domain::ASTRONOMY, $star->domain);
         self::assertSame('source', $star->kind);
@@ -85,7 +85,7 @@ final class GaiaSourceTest extends TestCase
         self::assertSame('M', $star->value('spectral_type'));
         self::assertFalse($star->value('non_single_star'));
         self::assertSame('gaia', $star->property('parallax')->source);
-        self::assertSame(['simbad:Gaia DR3 4472832130942575872', 'simbad:HIP 87937'], $star->identifiers()->keys(), 'its Hipparcos best neighbour: the same star');
+        self::assertSame(['gaia:4472832130942575872', 'simbad:Gaia DR3 4472832130942575872', 'simbad:HIP 87937'], $star->identifiers()->keys(), 'its designation and its Hipparcos best neighbour as SIMBAD names them: the same star');
         self::assertSame(['HIP 87937'], $star->synonyms);
         self::assertNull($star->place, 'a position on the sky is not a place on the Earth');
         self::assertCount(1, $this->calls);
@@ -104,6 +104,8 @@ final class GaiaSourceTest extends TestCase
 
         self::assertSame($star->label, $this->source()->entity(Identifier::of(Scheme::SIMBAD, 'Gaia DR3 2835207319109249920'))?->label, 'what SIMBAD and omnilab/exoplanets give');
         self::assertSame($star->label, $this->source()->entity('simbad:Gaia DR3 2835207319109249920')?->label);
+        self::assertSame($star->label, $this->source()->entity(Identifier::of(Scheme::GAIA, '2835207319109249920'))?->label, 'the core\'s gaia scheme');
+        self::assertSame($star->label, $this->source()->entity('gaia:2835207319109249920')?->label);
     }
 
     public function testAnUnknownSourceIsNull(): void

@@ -13,12 +13,12 @@ key.
 ```php
 $gaia = (new GaiaSourceFactory($http))->create(['mailto' => 'support@glitchr.io']);
 $star = $gaia->entity('Gaia DR3 4472832130942575872');
-$star->id;                               // simbad:Gaia DR3 4472832130942575872
+$star->id;                               // gaia:4472832130942575872
 $star->property('parallax');             // 546.9759397309 ± 0.040116355 mas
 $star->property('proper_motion_dec');    // 10362.3942065466 ± 0.036070455 mas/yr
 $star->property('radial_velocity');      // -110.46822 ± 0.13125522 km/s
 $star->property('temperature');          // 3099.6335 ± 1.9983 K (GSP-Phot)
-$star->identifiers()->keys();            // simbad:Gaia DR3 4472832130942575872, simbad:HIP 87937
+$star->identifiers()->keys();            // gaia:4472832130942575872, simbad:Gaia DR3 4472832130942575872, simbad:HIP 87937
 $gaia->cone(266.4168, -29.0078, 0.02, limit: 5);       // around Sgr A*, the nearest first (outside the contract)
 ```
 
@@ -31,8 +31,8 @@ omnilab:
                 mailto: 'support@glitchr.io'   # in the User-Agent
 ```
 
-The core has no Gaia scheme: a source is named in the `simbad` scheme by its designation, the
-name SIMBAD resolves for the sources it lists. SIMBAD gives a star's Gaia DR3 designation among
+A source is named in the core's `gaia` scheme by its source_id (Wikidata's P13228), and in the
+`simbad` scheme by its designation, the name SIMBAD resolves for the sources it lists. SIMBAD gives a star's Gaia DR3 designation among
 its identifiers, so the `Collector` follows a star from SIMBAD into Gaia
 (`$collector->collect('simbad', "Barnard's star")`); omnilab/exoplanets gives a host star's.
 

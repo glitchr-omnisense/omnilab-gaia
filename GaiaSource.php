@@ -159,20 +159,24 @@ final class GaiaSource extends HttpSource
     }
 
     /**
-     * The source_id an identifier gives: digits, or "Gaia DR3 " and digits.
+     * The source_id an identifier gives: digits, "Gaia DR3 " and digits, an
+     * Identifier of the gaia scheme, or its designation in the simbad
+     * scheme (as SIMBAD names it).
      */
     public static function sourceId(Identifier|string $id): ?string
     {
+        if (\is_string($id)) {
+            $id = Identifier::parse($id) ?? $id;
+        }
         if ($id instanceof Identifier) {
+            if (Scheme::GAIA === $id->scheme) {
+                return $id->value;
+            }
+            // Its designation as SIMBAD names it: simbad:Gaia DR3 ...
             if (Scheme::SIMBAD !== $id->scheme) {
                 return null;
             }
             $id = $id->value;
-        } elseif (null !== ($parsed = Identifier::parse($id))) {
-            if (Scheme::SIMBAD !== $parsed->scheme) {
-                return null;
-            }
-            $id = $parsed->value;
         }
 
         // A source_id is a signed 64-bit integer: at most 9223372036854775807.
@@ -273,7 +277,7 @@ final class GaiaSource extends HttpSource
         $add('duplicated_source', 'Duplicated source', isset($row['duplicated_source']) ? (bool) $row['duplicated_source'] : null);
         $add('separation', 'Separation from the cone\'s centre', is_numeric($row['separation'] ?? null) ? new Quantity($row['separation'] * 3600, 'arcsec') : null);
 
-        $id = Identifier::of(Scheme::SIMBAD, $designation);
+        $id = Identifier::of(Scheme::GAIA, (string) $sourceId);
         $hip = is_numeric($row['hip'] ?? null) ? Identifier::tryOf(Scheme::SIMBAD, 'HIP '.(int) $row['hip']) : null;
 
         return new Entity(
@@ -283,9 +287,9 @@ final class GaiaSource extends HttpSource
             kind: 'source',
             synonyms: null === $hip ? [] : [$hip->value],
             properties: $properties,
-            // Gaia's best neighbour in Hipparcos 2: the same star, by the name SIMBAD resolves.
-            identifiers: new Identifiers([$hip]),
-            url: 'https://vizier.cds.unistra.fr/viz-bin/VizieR-S?'.rawurlencode($designation),
+            // Its designation and Gaia's best neighbour in Hipparcos 2: the same star, by the names SIMBAD resolves.
+            identifiers: new Identifiers([Identifier::tryOf(Scheme::SIMBAD, $designation), $hip]),
+            url: $id->url(),
             source: 'gaia',
         );
     }
