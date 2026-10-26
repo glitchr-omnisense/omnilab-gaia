@@ -1,6 +1,6 @@
 # omnilab/gaia
 
-Gaia DR3 for [omniscient/omnilab](https://github.com/glitchr-studio/omnilab): a source of ESA's Gaia
+Gaia DR3 for [omnisense/omnilab](https://github.com/glitchr-omnisense/omnilab): a source of ESA's Gaia
 mission (1.8 billion of them) by its `source_id` or its designation - `Gaia DR3
 4472832130942575872`, Barnard's star - with its position at epoch J2016.0, parallax, proper
 motion and RUWE, its G, BP, RP and RVS magnitudes, its radial velocity and line broadening, its
