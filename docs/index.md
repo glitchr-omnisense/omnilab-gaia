@@ -1,5 +1,10 @@
 # omnilab/gaia
 
+ESA's Gaia DR3, through the Gaia Archive's TAP+ service (`https://gea.esac.esa.int/tap-server/tap/`),
+for [omnisense/omnilab](https://github.com/glitchr-omnisense/omnilab): a source by its `source_id`
+or designation - astrometry, photometry, radial velocity, astrophysical parameters - as an entity;
+outside the contract, the sources of a cone on the sky. No key.
+
 ## Installation
 
 ```sh
@@ -15,9 +20,51 @@ $gaia = (new GaiaSourceFactory($httpClient))->create([
 ]);
 ```
 
-With the Symfony bundle, register `GaiaSourceFactory` as a service (it is autoconfigured as a
-`SourceFactoryInterface`) until the bundle knows it by name. Give the HTTP client a timeout of 30 s
+With the Symfony bundle, the factory is registered as `gaia`. Give the HTTP client a timeout of 30 s
 or more: the archive takes 7 to 13 s to answer a query, however small.
+
+## Credentials
+
+None: the Gaia Archive's TAP service takes anonymous queries (10 s each on the archive's side,
+50,000 rows at most, 100 active at once). Give `mailto`, the address the archive writes to before
+it blocks a caller.
+
+## Options
+
+The factory's options, with the defaults it applies (`GaiaSourceFactory`):
+
+| Option | Type | Default | Required | Effect |
+|---|---|---|---|---|
+| `mailto` | `?string` | null | no | a contact address, in the User-Agent: whom the archive writes to before it blocks a caller |
+| `user_agent` | `?string` | null | no | the whole User-Agent, in place of the one made from `mailto` |
+| `throttle` | `float` | `0` | no | seconds left between two calls: the archive limits active queries, not their rate |
+| `base_uri` | `string` | `https://gea.esac.esa.int/tap-server/tap/` | no | the archive's TAP+ service (`sync` is joined to it) |
+
+## Capabilities
+
+`capabilities()` answers `entity`; an operation it does not answer throws `NotSupportedException` before any call.
+
+| Capability | Supported | |
+|---|---|---|
+| `entity` | yes | a `source_id` (`gaia:` too), a designation `Gaia DR3 ...`, a `simbad` identifier holding one; any other name, a DR2 id, another base refused before any call; one query |
+| `search` | no | the archive resolves no name |
+| `series` | no |  |
+| `products` | no |  |
+| `occurrences` | no |  |
+| `datasets` | no |  |
+| `jobs` | no |  |
+| `open` | no |  |
+| `structure` | no |  |
+| `cross_references` | no | none of another base: its Hipparcos number and SIMBAD designation are among its identifiers and synonyms ([The schemes](#the-schemes)) |
+| `forecast` | no |  |
+| `historical` | no |  |
+| `area` | no | a cone on the sky is no place on the Earth: `cone()`, outside the contract |
+| `station` | no |  |
+| `cloud_cover` | no |  |
+
+Outside the contract, on `Omnilab\Gaia\GaiaSource`: `cone(float $ra, float $dec, float $radius,
+int $limit = 50, ?float $maxMagnitude = null, ?string $cursor = null): Page` - the sources of a cone
+on the sky (ICRS degrees), the nearest first, 2,000 a page at most, paged by offset.
 
 ## Which API: the archive's TAP
 
@@ -153,6 +200,54 @@ variability tables, the other cross-matches (Tycho-2, 2MASS, AllWISE... beside H
 solar system objects, GSP-Spec's parameters, the asynchronous queries (an anonymous one has a
 minute) and the authenticated quotas are not read.
 
+## Example
+
+```php
+<?php
+
+require __DIR__.'/vendor/autoload.php';
+
+use Omnilab\Gaia\GaiaSourceFactory;
+use Symfony\Component\HttpClient\HttpClient;
+
+$gaia = (new GaiaSourceFactory(HttpClient::create(['timeout' => 60])))->create(['mailto' => 'you@example.org']);
+
+$barnard = $gaia->entity('Gaia DR3 4472832130942575872');   // Barnard's star
+echo $barnard->label, ': parallax ', $barnard->property('parallax'), ', G ', $barnard->property('magnitude_G'), ', radial velocity ', $barnard->property('radial_velocity'), "\n";
+
+$cone = $gaia->cone(269.452, 4.693, 0.05, 3, 12.0);   // the sources to G 12 within 0.05 degree of SIMBAD's J2000 position
+foreach ($cone as $source) {
+    echo '  ', $source->label, '  G ', $source->property('magnitude_G'), '  at ', $source->property('separation'), "\n";
+}
+```
+
+```
+Gaia DR3 4472832130942575872: parallax 546.9759397309 ± 0.040116355 mas, G 8.1939745 mag, radial velocity -110.46822 ± 0.13125522 km/s
+  Gaia DR3 4472832165289153024  G 11.451174 mag  at 68.8516830274 arcsec
+  Gaia DR3 4472832130942575872  G 8.1939745 mag  at 167.5826402312 arcsec
+```
+
+(as answered on 2026-10-27: two queries; Barnard's star is 167" from its J2000 position at Gaia's epoch J2016.0, its proper motion being 10.4" a year; the client's timeout raised: the archive takes 7 to 13 s a query)
+
+```yaml
+# config/packages/omnilab.yaml
+omnilab:
+    sources:
+        gaia: { factory: gaia, options: { mailto: '%env(OMNILAB_MAILTO)%' } }
+```
+
+`cone()` is a method of `GaiaSource`, not of the interface the bundle injects: check the instance before calling it.
+
+## Errors
+
+Every call goes through `HttpSource`: a 404 or a 410 (and a 204) is null - an empty page for a list -; a 429 is a `RateLimitedException` (`retryAfter` from `Retry-After`); a 5xx, a time-out or a host that does not answer an `UnavailableException`; any other 4xx a `ProviderException` with its `status` and what the service said; an answer that is not JSON a `ProviderException`, a web page answered for JSON an `UnavailableException`.
+
+The archive's own: a query past its 10 s is its 408, an `UnavailableException` ("narrow it"); its
+maintenance page answered with a 200 is an `UnavailableException` too (a web page for JSON).
+Before any call: an identifier it does not read (`NotSupportedException`); in `cone()`, a
+position outside the sky or a radius not above 0 (`\InvalidArgumentException`). An unknown
+`source_id` is no row, null.
+
 ## Verified, and not
 
 Against the real service on 2026-10-15 (Gaia DR3): Barnard's star by its designation (FLAME's
@@ -164,6 +259,20 @@ centre without the joins (13 s), with them a cone of 0.1° there (408 after 20 s
 walk above. The fixtures in `Tests/Fixtures/` are its answers (the 408's body copied from that
 answer). Each query took 7 to 13 s from asking to reading.
 
+Again on 2026-10-27: Barnard's star by its designation, the sources to G 12 within 0.05° of its
+J2000 position (the example above).
+
 Not verified: the pool of 100 active anonymous queries met; a cone of more than 50,000 rows
 (`limit` is capped at 2,000 a page; a page deep past 50,000 rows by `OFFSET` was not asked); a
 mirror (`base_uri`).
+
+## Responsibility
+
+This package is an independent, unofficial client: it is not affiliated with, endorsed by or
+sponsored by ESA or the Gaia DPAC. Gaia data are under
+[CC BY-NC 3.0 IGO](https://www.cosmos.esa.int/web/gaia-users/license) (commercial use under ESA's
+terms), to be acknowledged and cited (the mission paper and the DR3 summary), as the README's
+[Terms of use](https://github.com/glitchr-omnisense/omnilab-gaia#terms-of-use) says. Whoever runs
+the package is responsible for complying with them and for any use made of what it returns: see
+the README's [Responsibility](https://github.com/glitchr-omnisense/omnilab-gaia#responsibility)
+section.
