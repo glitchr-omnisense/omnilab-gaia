@@ -1,0 +1,40 @@
+{
+    "$schema": "https://github.com/glitchr-omnisense/contracts/blob/1.x/resources/usage-policy.schema.json",
+    "provider": "gaia",
+    "rateLimits": null,
+    "concurrency": null,
+    "rights": {
+        "commercial": "contract",
+        "openSourceRequired": null,
+        "caching": {
+            "permission": "allowed",
+            "maxTtl": null
+        },
+        "storage": "allowed",
+        "redistribution": "allowed",
+        "attribution": {
+            "required": true,
+            "text": "Credit: ESA, Gaia DPAC",
+            "url": "https://www.cosmos.esa.int/web/gaia-users/credits",
+            "where": [
+                "source"
+            ]
+        },
+        "licence": "CC BY-NC 3.0 IGO"
+    },
+    "requirements": {
+        "key": false,
+        "userAgent": {
+            "required": false,
+            "pattern": null
+        }
+    },
+    "provenance": {
+        "terms": "https://www.cosmos.esa.int/web/esdc/terms-and-conditions",
+        "policy": "https://www.cosmos.esa.int/web/gaia-users/archive/faq",
+        "verifiedAt": "2026-11-10",
+        "declaredBy": "maintainer",
+        "contact": "data.licences@esa.int",
+        "notes": "Read 2026-11-10: the Gaia licence page and the ESDC terms: data of the ESA space science archives under CC BY-NC 3.0 IGO; prior to any commercial use a licence request goes to data.licences@esa.int (the contact above is for that); storage and redistribution are allowed non-commercially under the licence. Credit \"ESA/Gaia/DPAC\"; also cite the release papers (Gaia DR3...). No rate limit published: the archive FAQ says there are limits on data retrieved and query duration, quotas differing for anonymous and registered users (the \"Gaia Archive user quotas\" help section, not read); an older FAQ gives 90 min / 3,000,000 rows for anonymous async jobs. Temporary quota changes via the Gaia Helpdesk."
+    }
+}

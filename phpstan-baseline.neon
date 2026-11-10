@@ -1,0 +1,175 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: GaiaSource.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 2
+			path: GaiaSource.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 2
+			path: GaiaSource.php
+
+		-
+			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(mixed\)\: mixed\)\|null, Closure\(array\)\: string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: GaiaSource.php
+
+		-
+			message: '#^Parameter \#1 \$text of static method Omnilab\\Source\\HttpSource\:\:text\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: GaiaSource.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: GaiaSource.php
+
+		-
+			message: '#^Parameter \#3 \$value of class Omnilab\\Model\\Property constructor expects bool\|float\|int\|Omnilab\\Model\\Quantity\|string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: GaiaSource.php
+
+		-
+			message: '#^Cannot cast mixed to float\.$#'
+			identifier: cast.double
+			count: 1
+			path: GaiaSourceFactory.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: GaiaSourceFactory.php
+
+		-
+			message: '#^Cannot access property \$domain on Omnilab\\Model\\Entity\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Cannot access property \$id on Omnilab\\Model\\Entity\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Cannot access property \$kind on Omnilab\\Model\\Entity\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Cannot access property \$label on Omnilab\\Model\\Entity\|null\.$#'
+			identifier: property.nonObject
+			count: 9
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Cannot access property \$label on Omnilab\\Model\\Property\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Cannot access property \$place on Omnilab\\Model\\Entity\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Cannot access property \$source on Omnilab\\Model\\Property\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Cannot access property \$synonyms on Omnilab\\Model\\Entity\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Cannot access property \$uncertainty on bool\|float\|int\|Omnilab\\Model\\Quantity\|string\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Cannot access property \$url on Omnilab\\Model\\Entity\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Cannot call method identifiers\(\) on Omnilab\\Model\\Entity\|null\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Cannot call method number\(\) on Omnilab\\Model\\Property\|null\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Cannot call method number\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Cannot call method property\(\) on Omnilab\\Model\\Entity\|null\.$#'
+			identifier: method.nonObject
+			count: 17
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Cannot call method property\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Cannot call method unit\(\) on Omnilab\\Model\\Property\|null\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Cannot call method value\(\) on Omnilab\\Model\\Entity\|null\.$#'
+			identifier: method.nonObject
+			count: 7
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Parameter \#1 \$haystack of function str_contains expects string, array\<mixed\>\|string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Parameter \#1 \$haystack of function str_ends_with expects string, array\<mixed\>\|string given\.$#'
+			identifier: argument.type
+			count: 3
+			path: Tests/GaiaSourceTest.php
+
+		-
+			message: '#^Property Omnilab\\Gaia\\Tests\\GaiaSourceTest\:\:\$calls \(list\<string\>\) does not accept non\-empty\-list\<array\<mixed\>\|string\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: Tests/GaiaSourceTest.php
