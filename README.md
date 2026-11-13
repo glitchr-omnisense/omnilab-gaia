@@ -36,6 +36,34 @@ A source is named in the core's `gaia` scheme by its source_id (Wikidata's P1322
 its identifiers, so the `Collector` follows a star from SIMBAD into Gaia
 (`$collector->collect('simbad', "Barnard's star")`); omnilab/exoplanets gives a host star's.
 
+## Install and a first call
+
+```sh
+composer require omnilab/gaia
+```
+
+A real call, with no account and no key: Barnard's star in Gaia DR3. `mailto` is your address, sent
+in the User-Agent so that the service can reach you before it blocks a caller; the source keeps to
+the limits its [`policy.json`](policy.json) declares.
+
+```php
+<?php
+
+require __DIR__.'/vendor/autoload.php';
+
+use Omnilab\Gaia\GaiaSourceFactory;
+
+$gaia = (new GaiaSourceFactory())->create(['mailto' => 'you@example.org']);   // your address, in the User-Agent
+$star = $gaia->entity('Gaia DR3 4472832130942575872');
+echo $star->id, ', parallax ', $star->property('parallax'), "\n";
+```
+
+Its output on 2026-11-13:
+
+```
+gaia:4472832130942575872, parallax 546.9759397309 ± 0.040116355 mas
+```
+
 ## Terms of use
 
 Gaia data are distributed under [CC BY-NC 3.0 IGO](https://www.cosmos.esa.int/web/gaia-users/license)
